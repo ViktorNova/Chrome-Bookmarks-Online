@@ -18,8 +18,10 @@ openssl enc -aes-256-cbc -in Bookmarks -out Bookmarks.enc -pass pass:"YOUR PASSW
 ```
 * Under linux you can use this crontab entry to automate the syncing:
 ```
-0 * * * *  openssl enc -aes-256-cbc -in $HOME/.config/chromium/Default/Bookmarks -out $HOME/Dropbox/janosch.dockbox/Bookmarks.enc -pass pass:"YOUR PASSWORD" -e -base64
+0 * * * *  openssl enc -aes-256-cbc -in $HOME/.config/chromium/Default/Bookmarks
+    -out $HOME/Dropbox/janosch.dockbox/Bookmarks.enc -pass pass:"YOUR PASSWORD" -e -base64
 ```
+
 Configuration
 -------------
 You can enable (or disable) favicons by setting `loadFavicons` to `true` (or `false`) in file `index.html` at `line 15`. Without favicons page loads much faster.
