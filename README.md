@@ -24,7 +24,10 @@ your dockbox.io subdomains are managed. Add a new line:
 
 ### Chrome Bookmarks online
 * Clone the project.
-` git clone https://github.com/jandob/Chrome-Bookmarks-Online.git $HOME/Dropbox/USER.dockbox`
+
+```sh
+git clone https://github.com/jandob/Chrome-Bookmarks-Online.git $HOME/Dropbox/USER.dockbox
+```
 * This fork suppports encryption of the bookmark file, encrypt it with openssl.
   The PASSWORD is the one you will use in the webinterface to access your
   bookmarks.
@@ -32,7 +35,6 @@ your dockbox.io subdomains are managed. Add a new line:
 ```sh
 openssl enc -aes-256-cbc -in Bookmarks -out Bookmarks.enc -pass pass:"PASSWORD" -e -base64
 ```
-
 * Under linux you can use this crontab entry to automate the syncing (every full hour).
 
 ```sh
