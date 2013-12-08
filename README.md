@@ -28,10 +28,13 @@ your dockbox.io subdomains are managed. Add a new line:
 * This fork suppports encryption of the bookmark file, encrypt it with openssl.
   The PASSWORD is the one you will use in the webinterface to access your
   bookmarks.
+
 ```sh
 openssl enc -aes-256-cbc -in Bookmarks -out Bookmarks.enc -pass pass:"PASSWORD" -e -base64
 ```
+
 * Under linux you can use this crontab entry to automate the syncing (every full hour).
+
 ```sh
 BKM="$HOME/.config/chromium/Default/Bookmarks"
 BKMENC="$HOME/Dropbox/USER.dockbox/Bookmarks.enc"
