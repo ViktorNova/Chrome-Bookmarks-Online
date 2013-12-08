@@ -11,7 +11,7 @@ This is a fork of the original project
 it adds encryption support and instructions for dockbox usage.
 
 ##Installation
-* Clone the project into a dropbox folder.
+* Clone the project into a new or empty dropbox folder.
 
 ```sh
 git clone https://github.com/jandob/Chrome-Bookmarks-Online.git $HOME/Dropbox/USER.dockbox
@@ -20,7 +20,7 @@ git clone https://github.com/jandob/Chrome-Bookmarks-Online.git $HOME/Dropbox/US
 ###Dockbox
 * Invite `web@dockbox.io` to share the folder with you (via Dropbox web interface).
 * Wait until a folder called `dockbox` appears in the shared folder.
-* Open the file '$HOME/Dropbox/USER.dockbox/dockbox/hostnames.txt'.  Here all
+* Open the file `$HOME/Dropbox/USER.dockbox/dockbox/hostnames.txt`.  Here all
 your dockbox.io subdomains are managed. Add a new line:
 `USER.dockbox.io`
 * Verify its working by pointing your browser to `http://USER.dockbox.io`
