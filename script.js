@@ -1,20 +1,22 @@
-/** 
- * CromeBookmarks plugin 
+/**
+ * CromeBookmarks plugin
  */
 (function($){
     $.fn.CromeBookmarks = function (url, options) {
         var that = this;
         var defaults = {
             loadFavicons: false,
+            decrypt: false,
             cookieid: 'chrome-bookmarks',
-            search: $('form:first') // form selector
+            search: $('form:first'), // form selector
+            form: $('form:first') // form selector
         };
         options = $.extend({}, defaults, options);
-        
+
         if (options.loadFavicons) {
             $(that).show();
         }
-        
+
         var dataIndex = [],
             inSearch = false,
             found = false,
@@ -35,7 +37,7 @@
                         a         = '<a id="item-' + data[i].id + '" data-item="'
                                 + data[i].id + '" href="' + url + '">' + (data[i].name || '(no label)') + '</a>',
                         li        = '<li ' + className + '>' + a;
-                    
+
                     dataIndex[dataIndex.length] = {
                         id: data[i].id,
                         type: type,
@@ -54,7 +56,7 @@
 
             return ret;
         };
-        
+
         var opened = {};
         var getOpened = function(){
             var cookies = $.cookie(options.cookieid);
@@ -83,7 +85,7 @@
             if (inSearch) {
                 return false;
             }
-            
+
             var id = $(this).data('item');
             var li = $(this).parent();
             var open = li.hasClass('open') ? true : false;
@@ -99,18 +101,18 @@
             saveOpened();
             return false;
         }
-        
+
         var initSearch = function($form){
             var input = $form.find('input[name="query"]'),
                 cancel = $('a.clr_search'),
                 keyPressTimeout;
-            
+
             cancel.click(function(){
                 input.val('')
                 clear();
                 return false;
             });
-            
+
             var clear = function(){
                 $(that).removeClass('insearch');
                 $('a', that).removeClass('hl');
@@ -120,7 +122,7 @@
                 cancel.hide();
                 $notice.hide();
             }
-            
+
             var openItem = function(obj) {
                 $('#item-'+obj.id)
                     .addClass('hl')
@@ -128,7 +130,7 @@
                     .addClass('open')
                     .loadFavicons();
             }
-            
+
             var search = function(){
                 var val = input.val();
                 if (val.length > 2) {
@@ -160,43 +162,80 @@
                     cancel.show();
                 }
             }
-            
+
             input.bind('keyup', function(){
                 clearTimeout(keyPressTimeout);
                 keyPressTimeout = setTimeout(search, 1e3);
             });
             $form.submit(function(){
                 search();
-                return false; 
+                return false;
             });
         }
 
-        var cacheBuster = Math.round(new Date()/(1000*60));
-        $.ajax({
-            url: url,
-            data: {cb: cacheBuster},
-            dataType: 'json',
-            success: function(data){
-                $(that).html(getBookmarks(data.roots));
-                $('.folder > a', that).click(toggleFolder);
-                opened = getOpened();
-                $(that).css({display: 'block'});
-                if (options.search) {
-                    initSearch(options.search);
-                }
-            },
-            error: function(resp) {
-                if (resp.status == 404) {
-                    $(that).text("File '" + url + "' not found!").css('color', 'red');
-                }
+        var setData = function(data) {
+            $(that).html(getBookmarks(data.roots));
+            $('.folder > a', that).click(toggleFolder);
+            opened = getOpened();
+            $(that).css({display: 'block'});
+            if (options.search) {
+                initSearch(options.search);
             }
-        });
-        
+        };
+        var errorCallback = function(resp) {
+            if (resp.status == 404) {
+                $(that).text("File '" + url + "' not found!").css('color', 'red');
+            }
+        };
+
+        var cacheBuster = Math.round(new Date()/(1000*60));
+
+        if (options.decrypt) {
+            var passInput = options.form.find('input[type="password"]');
+            var searchInput = options.form.find('input[type="text"]');
+            searchInput.css('display', 'none');
+            passInput.focus();
+            passInput.keypress(function (e) {
+                if (e.which == 13) {
+                    $.ajax({
+                        url: url,
+                        data: {cb: cacheBuster},
+                        dataType: 'text',
+                        success: function(data){
+                            var words = CryptoJS.AES.decrypt(data, passInput.val());
+                            try {
+                                data = words.toString(CryptoJS.enc.Utf8);
+                                data = $.parseJSON(data);
+                            } catch (e) {
+                                $(that).text(e + " - wrong password?").css( 'color', 'red');
+                                return;
+                            }
+                            passInput.css('display', 'none');
+                            searchInput.css('display', 'block');
+                            searchInput.focus();
+                            setData(data);
+                        },
+                        error: errorCallback
+                    });
+                }
+            });
+        } else {
+            $.ajax({
+                url: url,
+                data: {cb: cacheBuster},
+                dataType: 'json',
+                success: function(data){
+                    setData(data);
+                },
+                error: errorCallback
+            });
+        }
+
         $.fn.loadFavicons = function(){
             if (!options.loadFavicons) {
                 return;
             }
-            
+
             var preloader = $('<div id="imgpreload" />').appendTo($('body'));
             $(this).find('> ul > li > a').not('.folder').each(function(){
                 var url = $(this).attr('href');
@@ -206,7 +245,7 @@
                     if (host.length > 1) {
                         url = host[1] + '/favicon.ico';
                         $('<img>').load(function(){
-                            if ($(this).width()){ 
+                            if ($(this).width()){
                                 link.css({
                                     'background-image': "url('" + url + "')",
                                     'background-position': 'left',
@@ -220,9 +259,9 @@
                 } catch (e) {}
             });
         }
-        
+
     }
-    
+
 })(jQuery);
 
 

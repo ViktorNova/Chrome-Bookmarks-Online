@@ -7,12 +7,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Chrome Bookmarks</title>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/aes.js"></script>
 <script type="text/javascript" src="script.js"></script>
 <script type="text/javascript">
     $(function(){
         var $bm = $('#bookmarks');
-        $bm.CromeBookmarks('Bookmarks', {
-            loadFavicons: true
+        $bm.CromeBookmarks('Bookmarks.enc', {
+            loadFavicons: true,
+            decrypt: true,
         });
     });
 </script>
@@ -26,6 +28,7 @@
                 <input type="text" name="query" autofocus placeholder="Search" />
                 <input type="submit" value="Search" />
                 <a href="#" class="clr_search" title="Clear search" ></a>
+                <input type="password" placeholder="Password" />
             </fieldset>
         </form>
     </header>
