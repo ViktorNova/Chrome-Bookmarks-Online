@@ -167,7 +167,7 @@
                 clearTimeout(keyPressTimeout);
                 keyPressTimeout = setTimeout(search, 1e3);
             });
-            $form.submit(function(){
+            $form.on('submit', function(){
                 search();
                 return false;
             });
@@ -193,31 +193,31 @@
         if (options.decrypt) {
             var passInput = options.form.find('input[type="password"]');
             var searchInput = options.form.find('input[type="text"]');
-            searchInput.css('display', 'none');
+            searchInput.hide();
             passInput.focus();
-            passInput.keypress(function (e) {
-                if (e.which == 13) {
-                    $.ajax({
-                        url: url,
-                        data: {cb: cacheBuster},
-                        dataType: 'text',
-                        success: function(data){
-                            var words = CryptoJS.AES.decrypt(data, passInput.val());
-                            try {
-                                data = words.toString(CryptoJS.enc.Utf8);
-                                data = $.parseJSON(data);
-                            } catch (e) {
-                                $(that).text(e + " - wrong password?").css( 'color', 'red');
-                                return;
-                            }
-                            passInput.css('display', 'none');
-                            searchInput.css('display', 'block');
-                            searchInput.focus();
-                            setData(data);
-                        },
-                        error: errorCallback
-                    });
-                }
+            $form.on('submit.authentication', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: url,
+                    data: {cb: cacheBuster},
+                    dataType: 'text',
+                    success: function(data){
+                        var words = CryptoJS.AES.decrypt(data, passInput.val());
+                        try {
+                            data = words.toString(CryptoJS.enc.Utf8);
+                            data = $.parseJSON(data);
+                        } catch (e) {
+                            $(that).text(e + " - wrong password?").css( 'color', 'red');
+                            return;
+                        }
+                        $form.off('submit.authentication');
+                        passInput.hide();
+                        searchInput.show();
+                        searchInput.focus();
+                        setData(data);
+                    },
+                    error: errorCallback
+                });
             });
         } else {
             $.ajax({
