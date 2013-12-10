@@ -168,6 +168,7 @@
                 keyPressTimeout = setTimeout(search, 1e3);
             });
             $form.on('submit', function(){
+                console.log('submit');
                 search();
                 return false;
             });
@@ -191,8 +192,10 @@
         var cacheBuster = Math.round(new Date()/(1000*60));
 
         if (options.decrypt) {
-            var passInput = options.form.find('input[type="password"]');
-            var searchInput = options.form.find('input[type="text"]');
+            var $form = options.form;
+            var passInput = $form.find('input[type="password"]');
+            var goButton = $form.find('button[type="submit"]');
+            var searchInput = $form.find('input[type="text"]');
             searchInput.hide();
             passInput.focus();
             $form.on('submit.authentication', function (e) {
@@ -202,15 +205,17 @@
                     data: {cb: cacheBuster},
                     dataType: 'text',
                     success: function(data){
+                        //$(that).text("decrypting...").css( 'color', 'blue');
                         var words = CryptoJS.AES.decrypt(data, passInput.val());
                         try {
                             data = words.toString(CryptoJS.enc.Utf8);
                             data = $.parseJSON(data);
                         } catch (e) {
-                            $(that).text(e + " - wrong password?").css( 'color', 'red');
+                            $(that).append("<p>" + e + " - wrong password?</p>").css( 'color', 'red');
                             return;
                         }
                         $form.off('submit.authentication');
+                        goButton.hide();
                         passInput.hide();
                         searchInput.show();
                         searchInput.focus();

@@ -24,11 +24,18 @@
         <h1>Chrome Bookmarks</h1>
         <form action="" method="get">
             <fieldset>
-                <legend>Search</legend>
-                <input type="text" name="query" autofocus placeholder="Search" />
-                <input type="submit" value="Search" />
-                <a href="#" class="clr_search" title="Clear search" ></a>
-                <input type="password" placeholder="Password" />
+                <div class="outer-center">
+                    <div class="inner-center">
+                        <input type="password" placeholder="Password" />
+                        <button type="submit" value="Search">Go</button>
+                        <!--<legend>Search</legend>-->
+                        <input type="text" name="query" autofocus placeholder="Search" />
+                        </div>
+                        <div class="form-col">
+                        <a href="#" class="clr_search" title="Clear search" ></a>
+                    </div>
+                </div>
+                <div class="outer-center"></div>
             </fieldset>
         </form>
     </header>
