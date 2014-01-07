@@ -34,12 +34,18 @@ your dockbox.io subdomains are managed. Add a new line:
 ```sh
 openssl enc -aes-256-cbc -in Bookmarks -out Bookmarks.enc -pass pass:"PASSWORD" -e -base64
 ```
-* Under linux you can use this crontab entry to automate the syncing (every full hour).
+* Under linux you can use this script to automate the syncing.
 
 ```sh
+#!/bin/bash
 BKM="$HOME/.config/chromium/Default/Bookmarks"
 BKMENC="$HOME/Dropbox/USER.dockbox/Bookmarks.enc"
-0 * * * *  openssl enc -aes-256-cbc -in $BKM -out $BKMENC -pass pass:"PASSWORD" -e -base64
+openssl enc -aes-256-cbc -in $BKM -out $BKMENC -pass pass:"PASSWORD" -e -base64
+```
+* To automaically sync every hour you can then use this crontab entry
+
+```sh
+0 * * * * $HOME/path/to/script
 ```
 
 ##Configuration
